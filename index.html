@@ -4,13 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barış Kıymetli — Portfolio</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <meta name="description" content="Barış Kıymetli — Web Tasarımı ve Kodlama Öğrencisi. Cesur ve akılda kalıcı dijital deneyimler, modern web arayüzleri ve marka kimliği.">
+    <meta property="og:title" content="Barış Kıymetli — Portfolio">
+    <meta property="og:description" content="Web Tasarımı & Kodlama Öğrencisi — Dijital deneyimler, modern web arayüzleri ve yaratıcı tasarım.">
+    <meta property="og:type" content="website">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230E0F11'/%3E%3Ctext x='50%25' y='65%25' fill='%23F5F5F5' font-family='sans-serif' font-weight='800' font-size='16' text-anchor='middle'%3EBK%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="css/fonts.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
+    <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
     <div class="custom-cursor" id="cursorDot" aria-hidden="true"></div>
     <div class="custom-cursor-ring" id="cursorRing" aria-hidden="true"></div>
     <div class="project-preview-follow" id="projectPreview" aria-hidden="true"></div>
@@ -57,14 +61,23 @@
             </div>
         </div>
         <div class="hero__photos">
-            <div class="hero__photo hero__photo--1">
-                <img src="images/ruins.jpeg" alt="Antik kemer">
+            <div class="hero__photo hero__photo--1 js-tilt">
+                <picture>
+                    <source srcset="images/ruins.webp" type="image/webp">
+                    <img src="images/ruins.jpeg" alt="Antik kemer" fetchpriority="high">
+                </picture>
             </div>
-            <div class="hero__photo hero__photo--2">
-                <img src="images/cat.jpeg" alt="Kedi">
+            <div class="hero__photo hero__photo--2 js-tilt">
+                <picture>
+                    <source srcset="images/cat.webp" type="image/webp">
+                    <img src="images/cat.jpeg" alt="Kedi" loading="lazy">
+                </picture>
             </div>
-            <div class="hero__photo hero__photo--3">
-                <img src="images/sunset.jpeg" alt="Günbatımı">
+            <div class="hero__photo hero__photo--3 js-tilt">
+                <picture>
+                    <source srcset="images/sunset.webp" type="image/webp">
+                    <img src="images/sunset.jpeg" alt="Günbatımı" loading="lazy">
+                </picture>
             </div>
         </div>
         <div class="hero__scroll-cue" aria-hidden="true">
@@ -92,13 +105,17 @@
 
     <section class="split" id="about">
         <div class="split__media">
-            <div class="split__portrait">
-                <img src="images/hakkimda.png" alt="Barış Kıymetli İllüstrasyon">
+            <canvas id="floatingIconsCanvas" class="floating-icons-canvas" aria-hidden="true"></canvas>
+            <div class="split__portrait js-tilt">
+                <picture>
+                    <source srcset="images/hakkimda.webp" type="image/webp">
+                    <img src="images/hakkimda.png" alt="Barış Kıymetli İllüstrasyon" loading="lazy">
+                </picture>
             </div>
         </div>
         <div class="split__text">
             <h2 class="section-title">Hakkımda</h2>
-            <p class="manifesto">Kopya şablonların ve tekrar eden trendlerin ötesinde; kendi görsel dilimi var eden, cesur ve akılda kalıcı dijital deneyimler üretiyorum. Sosyal medya tasarımlarından modern web arayüzlerine uzanan süreçte ana hedefim iz bırakmak ve fark yaratmak.</p>
+            <p class="manifesto">Kopya şablonların ve tekrar eden trendlerin ötesinde; kendi görsel dilimi var eden, <span class="rough-accent">cesur<svg class="rough-svg" viewBox="0 0 100 12" preserveAspectRatio="none"><path d="M2,9 Q25,2 50,8 T98,5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></span> ve akılda kalıcı dijital deneyimler üretiyorum. Sosyal medya tasarımlarından modern web arayüzlerine uzanan süreçte ana hedefim <span class="rough-accent">iz bırakmak<svg class="rough-svg" viewBox="0 0 100 12" preserveAspectRatio="none"><path d="M2,8 Q30,1 60,9 T98,4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></span> ve fark yaratmak.</p>
             <div class="detail-rows">
                 <div class="detail-row">
                     <span class="detail-row__label">İsim</span>
