@@ -308,48 +308,63 @@
             if (portrait) {
                 var cRect = canvas.getBoundingClientRect();
                 var pRect = portrait.getBoundingClientRect();
-                obstacle.x = (pRect.left + pRect.right) / 2 - cRect.left;
-                obstacle.y = (pRect.top + pRect.bottom) / 2 - cRect.top;
-                obstacle.rx = (pRect.width / 2) * 0.85;
-                obstacle.ry = (pRect.height / 2) * 0.9;
+                if (cRect.width > 0 && pRect.width > 0) {
+                    obstacle.x = (pRect.left + pRect.right) / 2 - cRect.left;
+                    obstacle.y = (pRect.top + pRect.bottom) / 2 - cRect.top;
+                    obstacle.rx = (pRect.width / 2) * 0.75;
+                    obstacle.ry = (pRect.height / 2) * 0.8;
+                }
             }
         }
 
         function resize() {
             var rect = container.getBoundingClientRect();
-            width = rect.width + 60;
-            height = rect.height + 60;
-            canvas.width = width;
-            canvas.height = height;
+            var dpr = window.devicePixelRatio || 1;
+            width = Math.max(300, Math.floor(rect.width + 60));
+            height = Math.max(300, Math.floor(rect.height + 60));
+
+            canvas.width = Math.floor(width * dpr);
+            canvas.height = Math.floor(height * dpr);
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
             updateObstacle();
         }
         resize();
         window.addEventListener('resize', resize);
+        window.addEventListener('load', resize);
+
+        var portraitImg = container.querySelector('.split__portrait img');
+        if (portraitImg) {
+            portraitImg.addEventListener('load', resize);
+        }
 
         var tools = [
-            { type: 'figma', w: 48, h: 72 },
-            { type: 'ps', w: 54, h: 54 },
-            { type: 'ai', w: 54, h: 54 },
-            { type: 'xd', w: 54, h: 54 },
-            { type: 'vs', w: 56, h: 56 },
-            { type: 'html', w: 50, h: 56 },
-            { type: 'css', w: 50, h: 56 },
-            { type: 'js', w: 52, h: 52 }
+            { type: 'figma', w: 44, h: 66 },
+            { type: 'ps', w: 52, h: 52 },
+            { type: 'ai', w: 52, h: 52 },
+            { type: 'xd', w: 52, h: 52 },
+            { type: 'vs', w: 54, h: 54 },
+            { type: 'html', w: 48, h: 54 },
+            { type: 'css', w: 48, h: 54 },
+            { type: 'js', w: 50, h: 50 }
         ];
 
         var particles = tools.map(function (tool, index) {
             var radius = Math.max(tool.w, tool.h) * 0.55;
-            var startX = index % 2 === 0 ? 30 + Math.random() * 80 : width - 110 + Math.random() * 80;
-            var startY = 40 + Math.random() * (height - 80);
+            var isLeft = index % 2 === 0;
+            var startX = isLeft ? 20 + Math.random() * 60 : width - 80 - Math.random() * 60;
+            var startY = 30 + Math.random() * Math.max(100, height - 80);
             return {
                 tool: tool,
                 x: Math.max(radius, Math.min(width - radius, startX)),
                 y: Math.max(radius, Math.min(height - radius, startY)),
-                vx: (Math.random() > 0.5 ? 1 : -1) * (0.6 + Math.random() * 0.8),
-                vy: (Math.random() > 0.5 ? 1 : -1) * (0.6 + Math.random() * 0.8),
+                vx: (isLeft ? -1 : 1) * (0.5 + Math.random() * 0.7),
+                vy: (Math.random() > 0.5 ? 1 : -1) * (0.5 + Math.random() * 0.7),
                 radius: radius,
-                rotation: (Math.random() - 0.5) * 0.25,
-                vRot: (Math.random() - 0.5) * 0.005
+                rotation: (Math.random() - 0.5) * 0.2,
+                vRot: (Math.random() - 0.5) * 0.004
             };
         });
 
@@ -604,7 +619,10 @@
         }
 
         function draw() {
-            ctx.clearRect(0, 0, width, height);
+            ctx.save();
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.restore();
 
             for (var i = 0; i < particles.length; i++) {
                 var p = particles[i];
