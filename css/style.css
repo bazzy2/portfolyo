@@ -323,27 +323,40 @@ ul { list-style: none; }
 }
 
 .ticker {
+    display: block;
     width: 100%;
     overflow: hidden;
     white-space: nowrap;
     background: #EAE6DF;
     color: #0E0F11;
-    padding: 0.75rem 0;
+    padding: 0.85rem 0;
     user-select: none;
+    cursor: pointer;
+    text-decoration: none;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+.ticker:hover {
+    background: #0E0F11;
+    color: #EAE6DF;
+}
+
+.ticker:hover .ticker__track {
+    animation-play-state: paused;
 }
 
 .ticker__track {
     display: inline-flex;
     gap: 3.5rem;
-    animation: tickerScroll 16s linear infinite;
+    animation: tickerScroll 20s linear infinite;
     will-change: transform;
 }
 
 .ticker__track span {
     font-family: var(--ff-heading);
     font-weight: 800;
-    font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+    font-size: clamp(1.3rem, 2.2vw, 2rem);
     letter-spacing: 0.12em;
     display: inline-block;
     line-height: 1;
