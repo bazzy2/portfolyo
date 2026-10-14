@@ -301,8 +301,19 @@
         var ctx = canvas.getContext('2d');
         var container = canvas.parentElement;
 
-        var width = 0;
-        var height = 0;
+        var obstacle = { x: 0, y: 0, rx: 0, ry: 0 };
+
+        function updateObstacle() {
+            var portrait = container.querySelector('.split__portrait');
+            if (portrait) {
+                var cRect = canvas.getBoundingClientRect();
+                var pRect = portrait.getBoundingClientRect();
+                obstacle.x = (pRect.left + pRect.right) / 2 - cRect.left;
+                obstacle.y = (pRect.top + pRect.bottom) / 2 - cRect.top;
+                obstacle.rx = (pRect.width / 2) * 0.85;
+                obstacle.ry = (pRect.height / 2) * 0.9;
+            }
+        }
 
         function resize() {
             var rect = container.getBoundingClientRect();
@@ -310,12 +321,13 @@
             height = rect.height + 60;
             canvas.width = width;
             canvas.height = height;
+            updateObstacle();
         }
         resize();
         window.addEventListener('resize', resize);
 
         var tools = [
-            { type: 'figma', w: 46, h: 68 },
+            { type: 'figma', w: 48, h: 72 },
             { type: 'ps', w: 54, h: 54 },
             { type: 'ai', w: 54, h: 54 },
             { type: 'xd', w: 54, h: 54 },
@@ -325,14 +337,16 @@
             { type: 'js', w: 52, h: 52 }
         ];
 
-        var particles = tools.map(function (tool) {
+        var particles = tools.map(function (tool, index) {
             var radius = Math.max(tool.w, tool.h) * 0.55;
+            var startX = index % 2 === 0 ? 30 + Math.random() * 80 : width - 110 + Math.random() * 80;
+            var startY = 40 + Math.random() * (height - 80);
             return {
                 tool: tool,
-                x: radius + 20 + Math.random() * (width - radius * 2 - 40),
-                y: radius + 20 + Math.random() * (height - radius * 2 - 40),
-                vx: (Math.random() - 0.5) * 1.2,
-                vy: (Math.random() - 0.5) * 1.2,
+                x: Math.max(radius, Math.min(width - radius, startX)),
+                y: Math.max(radius, Math.min(height - radius, startY)),
+                vx: (Math.random() > 0.5 ? 1 : -1) * (0.6 + Math.random() * 0.8),
+                vy: (Math.random() > 0.5 ? 1 : -1) * (0.6 + Math.random() * 0.8),
                 radius: radius,
                 rotation: (Math.random() - 0.5) * 0.25,
                 vRot: (Math.random() - 0.5) * 0.005
@@ -348,18 +362,44 @@
 
                 if (p.x - p.radius < 0) {
                     p.x = p.radius;
-                    p.vx *= -1;
+                    p.vx = Math.abs(p.vx);
                 } else if (p.x + p.radius > width) {
                     p.x = width - p.radius;
-                    p.vx *= -1;
+                    p.vx = -Math.abs(p.vx);
                 }
 
                 if (p.y - p.radius < 0) {
                     p.y = p.radius;
-                    p.vy *= -1;
+                    p.vy = Math.abs(p.vy);
                 } else if (p.y + p.radius > height) {
                     p.y = height - p.radius;
-                    p.vy *= -1;
+                    p.vy = -Math.abs(p.vy);
+                }
+
+                if (obstacle.rx > 0 && obstacle.ry > 0) {
+                    var odx = p.x - obstacle.x;
+                    var ody = p.y - obstacle.y;
+                    var effRx = obstacle.rx + p.radius;
+                    var effRy = obstacle.ry + p.radius;
+                    var normDist = (odx * odx) / (effRx * effRx) + (ody * ody) / (effRy * effRy);
+
+                    if (normDist < 1) {
+                        var angle = Math.atan2(ody / effRy, odx / effRx);
+                        var targetX = obstacle.x + Math.cos(angle) * effRx;
+                        var targetY = obstacle.y + Math.sin(angle) * effRy;
+
+                        var nx = Math.cos(angle);
+                        var ny = Math.sin(angle);
+                        var dot = p.vx * nx + p.vy * ny;
+
+                        if (dot < 0) {
+                            p.vx -= 1.8 * dot * nx;
+                            p.vy -= 1.8 * dot * ny;
+                        }
+
+                        p.x = targetX;
+                        p.y = targetY;
+                    }
                 }
 
                 for (var j = i + 1; j < particles.length; j++) {
@@ -370,9 +410,9 @@
                     var minDist = p.radius + p2.radius + 6;
 
                     if (dist < minDist && dist > 0) {
-                        var angle = Math.atan2(dy, dx);
-                        var sin = Math.sin(angle);
-                        var cos = Math.cos(angle);
+                        var cAngle = Math.atan2(dy, dx);
+                        var sin = Math.sin(cAngle);
+                        var cos = Math.cos(cAngle);
 
                         var vx1 = p.vx * cos + p.vy * sin;
                         var vy1 = p.vy * cos - p.vx * sin;
@@ -398,38 +438,47 @@
             ctx.save();
 
             if (type === 'figma') {
-                var s = 10;
+                var r = 12;
+
                 ctx.fillStyle = '#F24E1E';
                 ctx.beginPath();
-                ctx.arc(-s, -s * 2, s, Math.PI * 0.5, Math.PI * 1.5);
-                ctx.rect(-s, -s * 3, s, s * 2);
+                ctx.moveTo(0, -36);
+                ctx.lineTo(-r, -36);
+                ctx.arc(-r, -24, r, -Math.PI / 2, Math.PI / 2, true);
+                ctx.lineTo(0, -12);
+                ctx.closePath();
                 ctx.fill();
 
                 ctx.fillStyle = '#FF7262';
                 ctx.beginPath();
-                ctx.arc(s, -s * 2, s, Math.PI * 1.5, Math.PI * 0.5);
-                ctx.rect(0, -s * 3, s, s * 2);
+                ctx.moveTo(0, -36);
+                ctx.lineTo(r, -36);
+                ctx.arc(r, -24, r, -Math.PI / 2, Math.PI / 2, false);
+                ctx.lineTo(0, -12);
+                ctx.closePath();
                 ctx.fill();
 
                 ctx.fillStyle = '#A259FF';
                 ctx.beginPath();
-                ctx.arc(-s, 0, s, Math.PI * 0.5, Math.PI * 1.5);
-                ctx.rect(-s, -s, s, s * 2);
+                ctx.moveTo(0, -12);
+                ctx.lineTo(-r, -12);
+                ctx.arc(-r, 0, r, -Math.PI / 2, Math.PI / 2, true);
+                ctx.lineTo(0, 12);
+                ctx.closePath();
                 ctx.fill();
 
                 ctx.fillStyle = '#1ABCFE';
                 ctx.beginPath();
-                ctx.arc(0, 0, s, 0, Math.PI * 2);
+                ctx.arc(r, 0, r, 0, Math.PI * 2);
                 ctx.fill();
 
                 ctx.fillStyle = '#0ACF83';
                 ctx.beginPath();
-                ctx.arc(-s, s * 2, s, Math.PI * 0.5, Math.PI * 1.5);
-                ctx.arc(-s, s * 2, s, 0, Math.PI * 0.5);
-                ctx.lineTo(-s, s * 3);
-                ctx.lineTo(0, s * 3);
-                ctx.lineTo(0, s);
-                ctx.lineTo(-s, s);
+                ctx.moveTo(0, 12);
+                ctx.lineTo(-r, 12);
+                ctx.arc(-r, 24, r, -Math.PI / 2, Math.PI / 2, true);
+                ctx.arc(0, 24, r, Math.PI, 0, true);
+                ctx.closePath();
                 ctx.fill();
             } else if (type === 'ps') {
                 ctx.fillStyle = '#001E36';
