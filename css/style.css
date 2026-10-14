@@ -993,6 +993,10 @@ ul { list-style: none; }
 
     .custom-cursor, .custom-cursor-ring, .project-preview-follow { display: none !important; }
 
+    .stone-texture {
+        display: none !important;
+    }
+
     .hero__meta {
         flex-direction: column;
         gap: 1.5rem;

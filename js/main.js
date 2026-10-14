@@ -319,7 +319,7 @@
 
         function resize() {
             var rect = container.getBoundingClientRect();
-            var dpr = window.devicePixelRatio || 1;
+            var dpr = Math.min(window.devicePixelRatio || 1, 2);
             width = Math.max(300, Math.floor(rect.width + 60));
             height = Math.max(300, Math.floor(rect.height + 60));
 
@@ -637,13 +637,32 @@
             }
         }
 
-        function loop() {
-            updatePhysics();
-            draw();
-            requestAnimationFrame(loop);
+        var isCanvasVisible = true;
+        var animId = null;
+
+        if ('IntersectionObserver' in window) {
+            var canvasObserver = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    isCanvasVisible = entry.isIntersecting;
+                    if (isCanvasVisible && !animId) {
+                        animId = requestAnimationFrame(loop);
+                    }
+                });
+            }, { threshold: 0.05 });
+            canvasObserver.observe(canvas);
         }
 
-        loop();
+        function loop() {
+            if (!isCanvasVisible) {
+                animId = null;
+                return;
+            }
+            updatePhysics();
+            draw();
+            animId = requestAnimationFrame(loop);
+        }
+
+        animId = requestAnimationFrame(loop);
     }
 
     assignReveals();
