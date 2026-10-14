@@ -11,6 +11,10 @@
 </head>
 <body>
 
+    <div class="custom-cursor" id="cursorDot" aria-hidden="true"></div>
+    <div class="custom-cursor-ring" id="cursorRing" aria-hidden="true"></div>
+    <div class="project-preview-follow" id="projectPreview" aria-hidden="true"></div>
+
     <div class="stone-texture" aria-hidden="true"></div>
 
     <nav class="topbar" id="topbar">
@@ -42,6 +46,13 @@
                 <div class="hero__meta-item">
                     <span class="hero__meta-key">Diller</span>
                     <span class="hero__meta-val">Türkçe (Native) · English B2/C1</span>
+                </div>
+                <div class="hero__meta-item">
+                    <span class="hero__meta-key">Durum</span>
+                    <span class="hero__meta-val hero__meta-val--live">
+                        <span class="status-pulse"></span>
+                        Müsait / Freelance
+                    </span>
                 </div>
             </div>
         </div>
@@ -163,7 +174,7 @@
             <h2 class="section-title">Projeler</h2>
             <div class="project-list">
 
-                <div class="project-row">
+                <div class="project-row" data-preview="YÖRESEPETİ · MOBİL UI/UX" data-preview-sub="Figma E-Ticaret Arayüzü">
                     <div class="project-row__left">
                         <span class="project-row__name">YöreSepeti</span>
                         <span class="project-row__type">Mobil E-Ticaret UI/UX — Figma</span>
@@ -181,7 +192,7 @@
                     </div>
                 </div>
 
-                <div class="project-row">
+                <div class="project-row" data-preview="RESTORAN QR MENÜ" data-preview-sub="Responsive Mobil Web Frontend">
                     <div class="project-row__left">
                         <span class="project-row__name">Restoran QR Menü</span>
                         <span class="project-row__type">Mobil Web Arayüzü & Frontend</span>
@@ -199,7 +210,7 @@
                     </div>
                 </div>
 
-                <div class="project-row">
+                <div class="project-row" data-preview="OYUN İÇİ WEB ARAYÜZLERİ" data-preview-sub="Terminal Valor UI Geliştirme">
                     <div class="project-row__left">
                         <span class="project-row__name">Oyun İçi Web Arayüzleri</span>
                         <span class="project-row__type">Oyun İçi Web Arayüzü & Frontend</span>
@@ -225,7 +236,12 @@
         <div class="footer__inner">
             <h2 class="section-title">İletişim</h2>
             <div class="footer__grid">
-                <a href="mailto:bariskiymetli123@outlook.com" class="footer__contact-link">bariskiymetli123@outlook.com</a>
+                <div class="footer__email-wrapper">
+                    <button class="footer__contact-link" id="copyEmailBtn" aria-label="E-posta adresini kopyala">
+                        <span id="emailText">bariskiymetli123@outlook.com</span>
+                        <span class="copy-badge" id="copyBadge">Kopyala</span>
+                    </button>
+                </div>
                 <div class="footer__socials">
                     <a href="https://github.com/bazzy2" target="_blank" rel="noopener">GitHub ↗</a>
                     <a href="https://instagram.com/brkymetli" target="_blank" rel="noopener">Instagram ↗</a>

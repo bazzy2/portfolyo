@@ -3,7 +3,6 @@
     var burger = document.getElementById('burger');
     var navLinks = document.getElementById('navLinks');
     var allNavAnchors = navLinks.querySelectorAll('a');
-    var sections = document.querySelectorAll('section, footer, header');
     var ticking = false;
 
     function onScroll() {
@@ -123,7 +122,134 @@
         if (footerBottom) footerBottom.classList.add('reveal', 'reveal--d1');
     }
 
+    function initCustomCursor() {
+        var dot = document.getElementById('cursorDot');
+        var ring = document.getElementById('cursorRing');
+        if (!dot || !ring || window.matchMedia('(pointer: coarse)').matches) return;
+
+        var mouseX = 0;
+        var mouseY = 0;
+        var ringX = 0;
+        var ringY = 0;
+        var hasMoved = false;
+
+        window.addEventListener('mousemove', function (e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            dot.style.left = mouseX + 'px';
+            dot.style.top = mouseY + 'px';
+
+            if (!hasMoved) {
+                dot.style.opacity = '1';
+                ring.style.opacity = '1';
+                ringX = mouseX;
+                ringY = mouseY;
+                hasMoved = true;
+            }
+        });
+
+        function animateRing() {
+            ringX += (mouseX - ringX) * 0.18;
+            ringY += (mouseY - ringY) * 0.18;
+
+            ring.style.left = ringX + 'px';
+            ring.style.top = ringY + 'px';
+
+            requestAnimationFrame(animateRing);
+        }
+        animateRing();
+
+        var interactives = document.querySelectorAll('a, button, .project-row, .ticker');
+        interactives.forEach(function (el) {
+            el.addEventListener('mouseenter', function () {
+                ring.classList.add('custom-cursor-ring--hover');
+            });
+            el.addEventListener('mouseleave', function () {
+                ring.classList.remove('custom-cursor-ring--hover');
+            });
+        });
+    }
+
+    function initProjectFollower() {
+        var preview = document.getElementById('projectPreview');
+        if (!preview || window.matchMedia('(pointer: coarse)').matches) return;
+
+        var targetX = 0;
+        var targetY = 0;
+        var currentX = 0;
+        var currentY = 0;
+        var isHovering = false;
+
+        window.addEventListener('mousemove', function (e) {
+            targetX = e.clientX;
+            targetY = e.clientY;
+        });
+
+        function animateFollower() {
+            if (isHovering) {
+                currentX += (targetX - currentX) * 0.2;
+                currentY += (targetY - currentY) * 0.2;
+                preview.style.left = currentX + 'px';
+                preview.style.top = currentY + 'px';
+            }
+            requestAnimationFrame(animateFollower);
+        }
+        animateFollower();
+
+        document.querySelectorAll('.project-row').forEach(function (row) {
+            row.addEventListener('mouseenter', function () {
+                var title = this.getAttribute('data-preview') || '';
+                var sub = this.getAttribute('data-preview-sub') || '';
+
+                preview.innerHTML = '<span class="project-preview-title">' + title + '</span>' +
+                                    '<span class="project-preview-sub">' + sub + '</span>';
+                preview.classList.add('project-preview-follow--visible');
+                isHovering = true;
+            });
+
+            row.addEventListener('mouseleave', function () {
+                preview.classList.remove('project-preview-follow--visible');
+                isHovering = false;
+            });
+        });
+    }
+
+    function initEmailCopy() {
+        var btn = document.getElementById('copyEmailBtn');
+        var badge = document.getElementById('copyBadge');
+        if (!btn || !badge) return;
+
+        btn.addEventListener('click', function () {
+            var email = 'bariskiymetli123@outlook.com';
+
+            function showSuccess() {
+                badge.textContent = 'Kopyalandı ✓';
+                badge.classList.add('copy-badge--copied');
+                setTimeout(function () {
+                    badge.textContent = 'Kopyala';
+                    badge.classList.remove('copy-badge--copied');
+                }, 2200);
+            }
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(email).then(showSuccess);
+            } else {
+                var temp = document.createElement('textarea');
+                temp.value = email;
+                document.body.appendChild(temp);
+                temp.select();
+                document.execCommand('copy');
+                document.body.removeChild(temp);
+                showSuccess();
+            }
+        });
+    }
+
     assignReveals();
+    initCustomCursor();
+    initProjectFollower();
+    initEmailCopy();
     window.addEventListener('scroll', onScroll);
     scrollHandler();
 })();
